@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cronômetro de Contagem Regressiva</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background-color: #f9f9f9;
+    }
+    .input-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+    #timer {
+      font-size: 2rem;
+      margin: 20px 0;
+    }
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+    }
+    button {
+      padding: 10px 15px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button.start {
+      background-color: #4CAF50;
+      color: white;
+    }
+    button.reset {
+      background-color: #f44336;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Cronômetro de Contagem Regressiva</h1>
+    <div class="input-group">
+      <label for="nomeModalidade">Nome da Modalidade</label>
+      <input type="text" id="nomeModalidade" placeholder="Digite o nome da modalidade">
+    </div>
+    <div class="input-group">
+      <label for="tempo">Tempo de Contagem Regressiva (hh:mm:ss)</label>
+      <input type="text" id="tempo" placeholder="Ex: 00:10:00">
+    </div>
+    <div class="input-group">
+      <label for="modulo">Módulo da Modalidade</label>
+      <input type="text" id="modulo" placeholder="Digite o módulo">
+    </div>
+    <div id="timer">00:00:00</div>
+    <div class="buttons">
+      <button class="start" onclick="startCountdown()">Iniciar</button>
+      <button class="reset" onclick="resetCountdown()">Resetar</button>
+    </div>
+  </div>
+
+  <script>
+    let countdownInterval;
+    let timeRemaining = 0;
+
+    function startCountdown() {
+      const nomeModalidade = document.getElementById('nomeModalidade').value;
+      const tempo = document.getElementById('tempo').value;
+      const modulo = document.getElementById('modulo').value;
+
+      if (!nomeModalidade || !tempo || !modulo) {
+        alert("Por favor, preencha todos os campos.");
+        return;
+      }
+
+      const timeParts = tempo.split(':');
+      if (timeParts.length !== 3) {
+        alert("Por favor, insira o tempo no formato hh:mm:ss.");
+        return;
+      }
+
+      const hours = parseInt(timeParts[0], 10) || 0;
+      const minutes = parseInt(timeParts[1], 10) || 0;
+      const seconds = parseInt(timeParts[2], 10) || 0;
+
+      timeRemaining = hours * 3600 + minutes * 60 + seconds;
+
+      if (isNaN(timeRemaining) || timeRemaining <= 0) {
+        alert("Por favor, insira um tempo válido.");
+        return;
+      }
+
+      document.getElementById('timer').textContent = tempo;
+
+      clearInterval(countdownInterval);
+      countdownInterval = setInterval(() => {
+        if (timeRemaining <= 0) {
+          clearInterval(countdownInterval);
+          alert(`Tempo esgotado para a modalidade "${nomeModalidade}" do módulo "${modulo}".`);
+          return;
+        }
+
+        timeRemaining--;
+        const h = Math.floor(timeRemaining / 3600);
+        const m = Math.floor((timeRemaining % 3600) / 60);
+        const s = timeRemaining % 60;
+
+        document.getElementById('timer').textContent = 
+          `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+      }, 1000);
+    }
+
+    function resetCountdown() {
+      clearInterval(countdownInterval);
+      document.getElementById('timer').textContent = "00:00:00";
+      document.getElementById('nomeModalidade').value = "";
+      document.getElementById('tempo').value = "";
+      document.getElementById('modulo').value = "";
+      timeRemaining = 0;
+    }
+  </script>
+</body>
+</html>
