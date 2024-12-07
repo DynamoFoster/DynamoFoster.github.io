@@ -3,101 +3,99 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cronômetro de Contagem Regressiva</title>
+  <title>Cronômetro Moderno</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 20px;
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #1d3557, #457b9d);
+      color: #f1faee;
+      position: relative;
     }
-    .container {
-      max-width: 400px;
-      margin: 0 auto;
-      padding: 20px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      background-color: #f9f9f9;
-    }
-    .input-group {
-      margin-bottom: 15px;
-    }
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-    input {
-      width: 100%;
-      padding: 8px;
-      box-sizing: border-box;
+    .info {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 1.2rem;
+      line-height: 1.5;
+      color: #f1faee;
     }
     #timer {
-      font-size: 2rem;
-      margin: 20px 0;
+      font-size: 6rem;
+      font-weight: bold;
+      color: #ffffff;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     }
-    .buttons {
-      display: flex;
-      justify-content: space-between;
+    .reset-button {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
     }
     button {
-      padding: 10px 15px;
-      font-size: 1rem;
+      padding: 10px 20px;
+      font-size: 1.2rem;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
       cursor: pointer;
+      transition: transform 0.2s ease-in-out;
     }
     button.start {
-      background-color: #4CAF50;
-      color: white;
+      background-color: #2a9d8f;
+      color: #ffffff;
+    }
+    button.start:hover {
+      background-color: #219a84;
+      transform: scale(1.05);
     }
     button.reset {
-      background-color: #f44336;
-      color: white;
+      background-color: #e63946;
+      color: #ffffff;
+    }
+    button.reset:hover {
+      background-color: #d62839;
+      transform: scale(1.05);
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Cronômetro de Contagem Regressiva</h1>
-    <div class="input-group">
-      <label for="nomeModalidade">Nome da Modalidade</label>
-      <input type="text" id="nomeModalidade" placeholder="Digite o nome da modalidade">
-    </div>
-    <div class="input-group">
-      <label for="tempo">Tempo de Contagem Regressiva (hh:mm:ss)</label>
-      <input type="text" id="tempo" placeholder="Ex: 00:10:00">
-    </div>
-    <div class="input-group">
-      <label for="modulo">Módulo da Modalidade</label>
-      <input type="text" id="modulo" placeholder="Digite o módulo">
-    </div>
-    <div id="timer">00:00:00</div>
-    <div class="buttons">
-      <button class="start" onclick="startCountdown()">Iniciar</button>
-      <button class="reset" onclick="resetCountdown()">Resetar</button>
-    </div>
+  <div id="timer" style="display: none;">00:00:00</div>
+  <div id="info" class="info" style="display: none;"></div>
+  <div class="reset-button" style="display: none;">
+    <button class="reset" onclick="resetCountdown()">Resetar</button>
   </div>
+  <button class="start" onclick="startCountdown()">Iniciar</button>
 
   <script>
     let countdownInterval;
     let timeRemaining = 0;
 
     function startCountdown() {
-      const nomeModalidade = document.getElementById('nomeModalidade').value;
-      const tempo = document.getElementById('tempo').value;
-      const modulo = document.getElementById('modulo').value;
-
-      if (!nomeModalidade || !tempo || !modulo) {
-        alert("Por favor, preencha todos os campos.");
+      // Obter as informações via prompt
+      const nomeModalidade = prompt("Digite o nome da modalidade:");
+      if (!nomeModalidade) {
+        alert("Nome da modalidade é obrigatório.");
         return;
       }
 
-      const timeParts = tempo.split(':');
-      if (timeParts.length !== 3) {
+      const tempo = prompt("Digite o tempo de contagem regressiva (hh:mm:ss):");
+      if (!tempo || !/^(\d{2}):(\d{2}):(\d{2})$/.test(tempo)) {
         alert("Por favor, insira o tempo no formato hh:mm:ss.");
         return;
       }
 
+      const modulo = prompt("Digite o módulo da modalidade:");
+      if (!modulo) {
+        alert("Módulo da modalidade é obrigatório.");
+        return;
+      }
+
+      // Converter o tempo para segundos
+      const timeParts = tempo.split(':');
       const hours = parseInt(timeParts[0], 10) || 0;
       const minutes = parseInt(timeParts[1], 10) || 0;
       const seconds = parseInt(timeParts[2], 10) || 0;
@@ -109,6 +107,16 @@
         return;
       }
 
+      // Exibir informações inseridas
+      const info = document.getElementById('info');
+      info.innerHTML = `<strong>${nomeModalidade}</strong><br>Módulo: ${modulo}`;
+      info.style.display = 'block';
+
+      // Mostrar o cronômetro
+      document.getElementById('timer').style.display = 'block';
+      document.querySelector('.reset-button').style.display = 'block';
+
+      // Inicializar o cronômetro
       document.getElementById('timer').textContent = tempo;
 
       clearInterval(countdownInterval);
@@ -131,10 +139,13 @@
 
     function resetCountdown() {
       clearInterval(countdownInterval);
+
+      // Resetar cronômetro
       document.getElementById('timer').textContent = "00:00:00";
-      document.getElementById('nomeModalidade').value = "";
-      document.getElementById('tempo').value = "";
-      document.getElementById('modulo').value = "";
+      document.getElementById('timer').style.display = 'none';
+      document.querySelector('.reset-button').style.display = 'none';
+      document.getElementById('info').style.display = 'none';
+
       timeRemaining = 0;
     }
   </script>
